@@ -1,6 +1,9 @@
 package com.neko.moviedataservice.model.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +14,6 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleResponse {
-
     private String id;
 
     private String movieId;
@@ -23,6 +25,4 @@ public class ScheduleResponse {
     private LocalTime endTime;
 
     private BigDecimal price;
-
-
 }

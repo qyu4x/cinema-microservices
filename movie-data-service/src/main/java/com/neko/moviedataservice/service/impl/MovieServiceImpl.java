@@ -1,9 +1,12 @@
 package com.neko.moviedataservice.service.impl;
 
+import com.neko.moviedataservice.client.ScheduleExternalClient;
 import com.neko.moviedataservice.exception.DataNotFoundException;
 import com.neko.moviedataservice.model.entity.Movie;
 import com.neko.moviedataservice.model.request.MovieRequest;
 import com.neko.moviedataservice.model.response.MovieResponse;
+import com.neko.moviedataservice.model.response.ScheduleResponse;
+import com.neko.moviedataservice.model.response.WebScheduleResponse;
 import com.neko.moviedataservice.repository.MovieRepository;
 import com.neko.moviedataservice.service.MovieService;
 import org.slf4j.Logger;
@@ -23,10 +26,12 @@ public class MovieServiceImpl implements MovieService {
     private final static Logger log = LoggerFactory.getLogger(MovieServiceImpl.class);
 
     private final MovieRepository movieRepository;
+    private final ScheduleExternalClient scheduleExternalClient;
 
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, ScheduleExternalClient scheduleExternalClient) {
         this.movieRepository = movieRepository;
+        this.scheduleExternalClient = scheduleExternalClient;
     }
 
     @Override
@@ -44,9 +49,25 @@ public class MovieServiceImpl implements MovieService {
                 .language(movieRequest.getLanguage())
                 .build();
 
+        movieRequest.getScheduleRequests().stream().forEach(scheduleRequest -> {
+            scheduleRequest.setMovieId(movie.getId());
+        });
+
         log.info("do save movie data");
         movieRepository.save(movie);
-        log.info("successfully save movie data");
+        WebScheduleResponse webScheduleResponse = scheduleExternalClient.postScheduleForMovies(movieRequest.getScheduleRequests());
+        log.info("successfully save movie and schedule data");
+        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+        webScheduleResponse.getData().stream().forEach(response -> {
+            scheduleResponses.add(new ScheduleResponse(
+                    response.getId(),
+                    response.getMovieId(),
+                    response.getShowDate(),
+                    response.getStartTime(),
+                    response.getEndTime(),
+                    response.getPrice()
+            ));
+        });
 
         return MovieResponse.builder()
                 .id(movie.getId())
@@ -60,6 +81,7 @@ public class MovieServiceImpl implements MovieService {
                 .description(movie.getDescription())
                 .country(movie.getCountry())
                 .language(movie.getLanguage())
+                .scheduleResponses(scheduleResponses)
                 .build();
 
     }

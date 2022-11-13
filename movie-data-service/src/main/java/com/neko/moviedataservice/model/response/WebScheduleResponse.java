@@ -7,16 +7,16 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class WebScheduleResponse {
 
     private Integer code;
 
     private String status;
 
-    private List<ScheduleResponse> scheduleResponses;
+    private List<ScheduleResponse> data;
 
 }

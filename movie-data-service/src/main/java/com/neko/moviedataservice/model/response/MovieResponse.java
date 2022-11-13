@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,5 +38,7 @@ public class MovieResponse {
     private String language;
 
     private Boolean deleted;
+
+    private List<ScheduleResponse> scheduleResponses;
 
 }

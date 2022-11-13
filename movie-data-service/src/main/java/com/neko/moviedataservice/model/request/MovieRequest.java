@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -30,5 +31,7 @@ public class MovieRequest {
     private String country;
 
     private String language;
+
+    private List<ScheduleRequest> scheduleRequests;
 
 }

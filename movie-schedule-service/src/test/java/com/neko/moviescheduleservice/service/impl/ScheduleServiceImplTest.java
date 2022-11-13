@@ -1,12 +1,12 @@
-package com.neko.moviedataservice.client;
+package com.neko.moviescheduleservice.service.impl;
 
-import com.neko.moviedataservice.model.request.ScheduleRequest;
-import com.neko.moviedataservice.model.response.WebScheduleResponse;
+import com.neko.moviescheduleservice.model.request.ScheduleRequest;
+import com.neko.moviescheduleservice.model.response.ScheduleResponse;
+import com.netflix.discovery.converters.Auto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,13 +18,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class ScheduleExternalClientTest {
+class ScheduleServiceImplTest {
+
     @Autowired
-    private ScheduleExternalClient scheduleExternalClient;
+    private ScheduleServiceImpl scheduleService;
+
 
     @Test
-    void testPostSchedule() {
-
+    void testAddSchedule() {
         List<ScheduleRequest> scheduleRequests = new ArrayList<>();
         ScheduleRequest scheduleRequest = new ScheduleRequest(
                 UUID.randomUUID().toString(),
@@ -34,12 +35,8 @@ class ScheduleExternalClientTest {
                 new BigDecimal(30000L)
         );
         scheduleRequests.add(scheduleRequest);
+        List<ScheduleResponse> responses = scheduleService.add(scheduleRequests);
+        Assertions.assertNotNull(responses);
 
-        WebScheduleResponse webScheduleResponse = scheduleExternalClient.postScheduleForMovies(scheduleRequests);
-        Assertions.assertEquals(webScheduleResponse.getCode(), 200);
-        webScheduleResponse.getData().forEach(response -> {
-            System.out.println(response.getMovieId());
-            System.out.println(response.getPrice());
-        });
     }
 }
