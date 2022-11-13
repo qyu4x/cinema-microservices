@@ -1,13 +1,14 @@
 package com.neko.moviedataservice.model.response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MovieResponse {
 
     private String id;
