@@ -1,4 +1,4 @@
-package com.neko.moviescheduleservice.model.entity;
+package com.neko.moviedataservice.model.cliententity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -9,25 +9,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 
-@Entity
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 @ToString
-@Table(name = "schedules")
-public class Schedule implements Serializable {
+public class Schedule implements Serializable{
 
-    @Id
     private String id;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "scheduleId", fetch = FetchType.EAGER)
-    private Set<MovieSchedule> movieSchedules;
 
     private LocalDate showDate;
 
@@ -37,10 +29,8 @@ public class Schedule implements Serializable {
 
     private BigDecimal price;
 
-    @Column(name = "created_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 }

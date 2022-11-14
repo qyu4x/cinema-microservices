@@ -39,6 +39,6 @@ public class MovieResponse {
 
     private Boolean deleted;
 
-    private List<ScheduleResponse> scheduleResponses;
+    private List<MovieScheduleResponse> scheduleResponses;
 
 }

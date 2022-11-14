@@ -1,12 +1,10 @@
 package com.neko.moviedataservice.client;
 
 import com.neko.moviedataservice.config.RestTemplateConfiguration;
+import com.neko.moviedataservice.model.request.MovieScheduleRequest;
 import com.neko.moviedataservice.model.request.ScheduleRequest;
-import com.neko.moviedataservice.model.response.WebScheduleResponse;
-import com.netflix.discovery.converters.Auto;
+import com.neko.moviedataservice.model.response.WebMovieScheduleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +19,7 @@ public class ScheduleExternalClient {
         this.restTemplate = restTemplate;
     }
 
-    public WebScheduleResponse postScheduleForMovies(List<ScheduleRequest> scheduleRequest) {
-        return restTemplate.restTemplate().postForObject("http://movie-schedule-service/api/schedule/create", scheduleRequest, WebScheduleResponse.class);
+    public WebMovieScheduleResponse postScheduleForMovies(List<MovieScheduleRequest> movieScheduleRequests) {
+        return restTemplate.restTemplate().postForObject("http://movie-schedule-service/api/schedule/save", movieScheduleRequests, WebMovieScheduleResponse.class);
     }
 }

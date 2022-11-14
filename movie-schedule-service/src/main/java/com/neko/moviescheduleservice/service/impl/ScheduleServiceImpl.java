@@ -29,7 +29,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 request -> {
                     Schedule schedule = Schedule.builder()
                             .id(UUID.randomUUID().toString())
-                            .movieId(request.getMovieId())
                             .showDate(request.getShowDate())
                             .startTime(request.getStartTime())
                             .endTime(request.getEndTime())
@@ -46,7 +45,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 response -> {
                     ScheduleResponse scheduleResponse = ScheduleResponse.builder()
                             .id(UUID.randomUUID().toString())
-                            .movieId(response.getMovieId())
                             .showDate(response.getShowDate())
                             .startTime(response.getStartTime())
                             .endTime(response.getEndTime())

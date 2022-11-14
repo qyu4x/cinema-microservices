@@ -5,8 +5,9 @@ import com.neko.moviedataservice.exception.DataNotFoundException;
 import com.neko.moviedataservice.model.entity.Movie;
 import com.neko.moviedataservice.model.request.MovieRequest;
 import com.neko.moviedataservice.model.response.MovieResponse;
+import com.neko.moviedataservice.model.response.MovieScheduleResponse;
 import com.neko.moviedataservice.model.response.ScheduleResponse;
-import com.neko.moviedataservice.model.response.WebScheduleResponse;
+import com.neko.moviedataservice.model.response.WebMovieScheduleResponse;
 import com.neko.moviedataservice.repository.MovieRepository;
 import com.neko.moviedataservice.service.MovieService;
 import org.slf4j.Logger;
@@ -55,17 +56,14 @@ public class MovieServiceImpl implements MovieService {
 
         log.info("do save movie data");
         movieRepository.save(movie);
-        WebScheduleResponse webScheduleResponse = scheduleExternalClient.postScheduleForMovies(movieRequest.getScheduleRequests());
+        WebMovieScheduleResponse webMovieScheduleResponse = scheduleExternalClient.postScheduleForMovies(movieRequest.getScheduleRequests());
         log.info("successfully save movie and schedule data");
-        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
-        webScheduleResponse.getData().stream().forEach(response -> {
-            scheduleResponses.add(new ScheduleResponse(
+        List<MovieScheduleResponse> scheduleResponses = new ArrayList<>();
+        webMovieScheduleResponse.getData().stream().forEach(response -> {
+            scheduleResponses.add(new MovieScheduleResponse(
                     response.getId(),
                     response.getMovieId(),
-                    response.getShowDate(),
-                    response.getStartTime(),
-                    response.getEndTime(),
-                    response.getPrice()
+                    response.getSchedule()
             ));
         });
 

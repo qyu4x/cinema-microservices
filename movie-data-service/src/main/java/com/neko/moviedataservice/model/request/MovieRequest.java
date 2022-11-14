@@ -32,6 +32,6 @@ public class MovieRequest {
 
     private String language;
 
-    private List<ScheduleRequest> scheduleRequests;
+    private List<MovieScheduleRequest> scheduleRequests;
 
 }

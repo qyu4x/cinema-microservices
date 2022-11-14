@@ -1,5 +1,6 @@
 package com.neko.moviedataservice.model.response;
 
+import com.neko.moviedataservice.model.request.MovieScheduleRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WebScheduleResponse {
+public class WebMovieScheduleResponse {
 
     private Integer code;
 
     private String status;
 
-    private List<ScheduleResponse> data;
+    private List<MovieScheduleResponse> data;
 
 }
