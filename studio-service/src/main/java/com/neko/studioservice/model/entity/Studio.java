@@ -1,25 +1,29 @@
 package com.neko.studioservice.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "studios")
-public class Studio {
+public class Studio implements Serializable {
 
     @Id
     private String id;
 
-    private String movieId;
+    @JsonIgnore
+    @OneToMany(mappedBy = "studioId", fetch = FetchType.LAZY)
+    private Set<MovieStudio> movieStudios;
 
     private String name;
 

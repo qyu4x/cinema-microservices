@@ -26,7 +26,6 @@ public class StudioServiceImpl implements StudioService {
     public StudioResponse save(StudioRequest studioRequest) {
         Studio studio = Studio.builder()
                 .id(UUID.randomUUID().toString())
-                .movieId(studioRequest.getMovieId())
                 .name(studioRequest.getName())
                 .createdAt(LocalDateTime.now())
                 .isFull(false)
@@ -36,7 +35,6 @@ public class StudioServiceImpl implements StudioService {
 
         return StudioResponse.builder()
                 .id(studio.getId())
-                .movieId(studio.getMovieId())
                 .name(studio.getName())
                 .isFull(studio.getIsFull())
                 .createdAt(studio.getCreatedAt())
@@ -52,9 +50,10 @@ public class StudioServiceImpl implements StudioService {
         return StudioResponse.builder()
                 .id(studio.getId())
                 .name(studio.getName())
-                .movieId(studio.getMovieId())
                 .isFull(studio.getIsFull())
                 .createdAt(studio.getCreatedAt())
                 .build();
     }
+
+
 }
