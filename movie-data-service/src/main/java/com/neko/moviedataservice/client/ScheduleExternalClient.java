@@ -22,4 +22,8 @@ public class ScheduleExternalClient {
     public WebMovieScheduleResponse postScheduleForMovies(List<MovieScheduleRequest> movieScheduleRequests) {
         return restTemplate.restTemplate().postForObject("http://movie-schedule-service/api/schedule/save", movieScheduleRequests, WebMovieScheduleResponse.class);
     }
+
+    public WebMovieScheduleResponse findScheduleMovieByMovieId(String movieId) {
+        return restTemplate.restTemplate().getForObject("http://movie-schedule-service/api/schedule/get/" + movieId, WebMovieScheduleResponse.class);
+    }
 }

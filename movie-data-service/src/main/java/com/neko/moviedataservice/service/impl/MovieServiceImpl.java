@@ -1,18 +1,17 @@
 package com.neko.moviedataservice.service.impl;
 
 import com.neko.moviedataservice.client.ScheduleExternalClient;
+import com.neko.moviedataservice.client.StudioExternalClient;
 import com.neko.moviedataservice.exception.DataNotFoundException;
 import com.neko.moviedataservice.model.entity.Movie;
 import com.neko.moviedataservice.model.request.MovieRequest;
-import com.neko.moviedataservice.model.response.MovieResponse;
-import com.neko.moviedataservice.model.response.MovieScheduleResponse;
-import com.neko.moviedataservice.model.response.ScheduleResponse;
-import com.neko.moviedataservice.model.response.WebMovieScheduleResponse;
+import com.neko.moviedataservice.model.response.*;
 import com.neko.moviedataservice.repository.MovieRepository;
 import com.neko.moviedataservice.service.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,10 +28,13 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final ScheduleExternalClient scheduleExternalClient;
 
+    private final StudioExternalClient studioExternalClient;
+
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository, ScheduleExternalClient scheduleExternalClient) {
+    public MovieServiceImpl(MovieRepository movieRepository, ScheduleExternalClient scheduleExternalClient, StudioExternalClient studioExternalClient) {
         this.movieRepository = movieRepository;
         this.scheduleExternalClient = scheduleExternalClient;
+        this.studioExternalClient = studioExternalClient;
     }
 
     @Override
@@ -58,14 +60,6 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.save(movie);
         WebMovieScheduleResponse webMovieScheduleResponse = scheduleExternalClient.postScheduleForMovies(movieRequest.getScheduleRequests());
         log.info("successfully save movie and schedule data");
-        List<MovieScheduleResponse> scheduleResponses = new ArrayList<>();
-        webMovieScheduleResponse.getData().stream().forEach(response -> {
-            scheduleResponses.add(new MovieScheduleResponse(
-                    response.getId(),
-                    response.getMovieId(),
-                    response.getSchedule()
-            ));
-        });
 
         return MovieResponse.builder()
                 .id(movie.getId())
@@ -79,7 +73,7 @@ public class MovieServiceImpl implements MovieService {
                 .description(movie.getDescription())
                 .country(movie.getCountry())
                 .language(movie.getLanguage())
-                .scheduleResponses(scheduleResponses)
+                .scheduleResponses(webMovieScheduleResponse.getData())
                 .build();
 
     }
@@ -153,4 +147,62 @@ public class MovieServiceImpl implements MovieService {
         log.info("successful take all movies currently showing");
         return movieResponses;
     }
+
+    @Override
+    public MovieDetailResponse findScheduleAndStudioByMovieId(String movieId) {
+        if (movieId == null) {
+            throw new DataNotFoundException("data movie id is null");
+        }
+        Optional<Movie> movieResponse = movieRepository.findById(movieId);
+        if (movieResponse.isEmpty()) {
+            throw new DataNotFoundException("data movie response  is null");
+        }
+        WebMovieScheduleResponse scheduleResponses = scheduleExternalClient.findScheduleMovieByMovieId(movieId);
+        WebMovieStudioResponse studioResponses = studioExternalClient.findMovieStudioByMovieId(movieId);
+        if (!scheduleResponses.getCode().equals(HttpStatus.OK.value()) || scheduleResponses.getCode().equals(HttpStatus.NOT_FOUND.value())) {
+            throw new DataNotFoundException("failed fetch data schedule");
+        }
+
+        if (!studioResponses.getCode().equals(HttpStatus.OK.value()) || studioResponses.getCode().equals(HttpStatus.NOT_FOUND.value())) {
+            throw new DataNotFoundException("failed fetch data movie studio");
+        }
+
+        List<MovieScheduleResponse> movieScheduleResponses = new ArrayList<>();
+        scheduleResponses.getData().stream().forEach(scheduleResponse -> {
+            MovieScheduleResponse movieScheduleResponse = MovieScheduleResponse.builder()
+                    .movieId(scheduleResponse.getMovieId())
+                    .schedule(scheduleResponse.getSchedule())
+                    .build();
+            movieScheduleResponses.add(movieScheduleResponse);
+        });
+
+        List<MovieStudioResponse> movieStudioResponses = new ArrayList<>();
+        studioResponses.getData().stream().forEach(studioResponse -> {
+            MovieStudioResponse movieStudioResponse = MovieStudioResponse.builder()
+                    .movieId(studioResponse.getMovieId())
+                    .studio(studioResponse.getStudio())
+                    .build();
+            movieStudioResponses.add(movieStudioResponse);
+        });
+
+        Movie movie = movieResponse.get();
+        return MovieDetailResponse.builder()
+                .id(movie.getId())
+                .title(movie.getTitle())
+                .country(movie.getCountry())
+                .language(movie.getLanguage())
+                .genre(movie.getGenre())
+                .duration(movie.getDuration())
+                .startDate(movie.getStartDate())
+                .endDate(movie.getEndDate())
+                .showStatus(movie.getShowStatus())
+                .description(movie.getDescription())
+                .createdAt(movie.getCreatedAt())
+                .updatedAt(movie.getUpdatedAt())
+                .scheduleResponses(movieScheduleResponses)
+                .movieStudioResponses(movieStudioResponses)
+                .build();
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.neko.moviedataservice.controller;
 
 import com.neko.moviedataservice.exception.DataNotFoundException;
 import com.neko.moviedataservice.model.request.MovieRequest;
+import com.neko.moviedataservice.model.response.MovieDetailResponse;
 import com.neko.moviedataservice.model.response.MovieResponse;
 import com.neko.moviedataservice.model.response.WebResponse;
 import com.neko.moviedataservice.service.MovieService;
@@ -121,6 +122,32 @@ public class MovieController {
                     HttpStatus.NOT_FOUND.value(),
                     HttpStatus.NOT_FOUND.getReasonPhrase(),
                     new ArrayList<>()
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "/schedule/{id}")
+    @ResponseBody
+    public ResponseEntity<WebResponse<MovieDetailResponse>> findScheduleByMovieId(@PathVariable("id") String id){
+        try {
+            log.info("calling controller get schedule by movie id");
+            final MovieDetailResponse movieResponses = movieService.findScheduleAndStudioByMovieId(id);
+            log.info("successfully get schedule with movie id {} ", id);
+            WebResponse<MovieDetailResponse> webResponse = new WebResponse<>(
+                    HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(),
+                    movieResponses
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+
+        } catch (DataNotFoundException exception) {
+            log.error("failed get movie schedule with id {} ", id);
+            log.error("error {} ", exception.getMessage());
+            WebResponse<MovieDetailResponse> webResponse = new WebResponse<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    null
             );
             return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
         }

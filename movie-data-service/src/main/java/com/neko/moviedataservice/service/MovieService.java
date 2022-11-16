@@ -1,6 +1,7 @@
 package com.neko.moviedataservice.service;
 
 import com.neko.moviedataservice.model.request.MovieRequest;
+import com.neko.moviedataservice.model.response.MovieDetailResponse;
 import com.neko.moviedataservice.model.response.MovieResponse;
 
 import java.util.List;
@@ -14,5 +15,8 @@ public interface MovieService {
     Boolean delete(String id);
 
     List<MovieResponse> isShowing();
+
+    MovieDetailResponse findScheduleAndStudioByMovieId(String movieId);
+
 
 }
