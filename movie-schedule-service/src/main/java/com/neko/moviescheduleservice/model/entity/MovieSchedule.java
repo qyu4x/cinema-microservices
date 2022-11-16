@@ -19,14 +19,8 @@ public class MovieSchedule {
 
     private String movieId;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(
-            name = "schedule_id",
-            referencedColumnName = "id"
-    )
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private Schedule scheduleId;
 
 }

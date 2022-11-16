@@ -72,13 +72,34 @@ public class ScheduleController {
         } catch (Exception exception) {
             log.error("error {} ", exception.getMessage());
             WebResponse<List<MovieScheduleResponse>> webResponse = new WebResponse<>(
-                    HttpStatus.OK.value(),
-                    HttpStatus.OK.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                     null
             );
-            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+            return new ResponseEntity<>(webResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
+    @GetMapping("/get/{id}")
+    @ResponseBody
+    public ResponseEntity<WebResponse<List<MovieScheduleResponse>>> findMovieScheduleByMovieId(@PathVariable("id") String id) {
+        log.info("call controller find movei schedule by movie id");
+        try {
+            List<MovieScheduleResponse> movieScheduleResponses = movieScheduleService.findMovieScheduleByMovieId(id);
+            WebResponse<List<MovieScheduleResponse>> webResponse = new WebResponse<>(
+                    HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(),
+                    movieScheduleResponses
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+        }catch (Exception exception) {
+            log.error("error {} ", exception.getMessage());
+            WebResponse<List<MovieScheduleResponse>> webResponse = new WebResponse<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    null
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -5,6 +5,7 @@ import com.neko.moviescheduleservice.model.entity.MovieSchedule;
 import com.neko.moviescheduleservice.model.entity.Schedule;
 import com.neko.moviescheduleservice.model.request.MovieScheduleRequest;
 import com.neko.moviescheduleservice.model.response.MovieScheduleResponse;
+import com.neko.moviescheduleservice.model.response.ScheduleResponse;
 import com.neko.moviescheduleservice.repository.MovieScheduleRepository;
 import com.neko.moviescheduleservice.repository.ScheduleRepository;
 import com.neko.moviescheduleservice.service.MovieScheduleService;
@@ -42,6 +43,7 @@ public class MovieScheduleServiceImpl implements MovieScheduleService {
                     movieScheduleRepository.save(movieSchedule);
 
                     MovieScheduleResponse movieScheduleResponse = MovieScheduleResponse.builder()
+                            .id(schedule.getId())
                             .movieId(movieSchedule.getMovieId())
                             .schedule(schedule)
                             .build();
@@ -51,4 +53,29 @@ public class MovieScheduleServiceImpl implements MovieScheduleService {
         );
         return movieScheduleResponses;
     }
+
+    @Override
+    public List<MovieScheduleResponse> findMovieScheduleByMovieId(String movieId) {
+        if (movieId == null) {
+            throw new DataNotFoundException("movie id is null");
+        }
+
+        List<MovieSchedule> movieScheduleResponseRequest = movieScheduleRepository.findMovieScheduleById(movieId);
+        if (movieScheduleResponseRequest.get(0) == null) {
+            throw new DataNotFoundException("data movie schedule response is null");
+        }
+
+        List<MovieScheduleResponse> movieScheduleResponses = new ArrayList<>();
+        movieScheduleResponseRequest.stream().forEach(response -> {
+            MovieScheduleResponse movieScheduleResponse = MovieScheduleResponse.builder()
+                    .id(response.getId())
+                    .movieId(response.getMovieId())
+                    .schedule(response.getScheduleId())
+                    .build();
+            movieScheduleResponses.add(movieScheduleResponse);
+        });
+
+        return movieScheduleResponses;
+    }
+
 }
