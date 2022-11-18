@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class SeatDetailServiceImpl implements SeatDetailService {
         log.info("do add a seat with seat code {} ", seatDetailRequest.getSeatCode());
         Optional<Seat> seat = seatRepository.findById(seatDetailRequest.getSeatCode());
         WebStudioResponse studioResponse = studioExternalClient.findStudioById(seatDetailRequest.getStudioId());
+        log.info("success get studio response");
         if (seat.get() == null || studioResponse.getData() == null) {
             throw new DataNotFoundException("seat or studio is not found");
         }
@@ -48,6 +50,7 @@ public class SeatDetailServiceImpl implements SeatDetailService {
                 .id(UUID.randomUUID().toString())
                 .seatId(seat.get())
                 .studioId(studioResponse.getData().getName())
+                .status(seatDetailRequest.getStatus())
                 .build();
 
         seatDetailRepository.save(seatDetail);
@@ -56,12 +59,25 @@ public class SeatDetailServiceImpl implements SeatDetailService {
         return SeatDetailResponse.builder()
                 .seatCode(seat.get().getSeatCode())
                 .studioName(studioResponse.getData().getName())
+                .status(seatDetail.getStatus())
                 .build();
         
     }
 
     @Override
-    public List<SeatDetailResponse> getSeatIfAvailable(Boolean status) {
-        return null;
+    public List<SeatDetailResponse> getSeatIfAvailable() {
+        log.info("do get seat detail if available");
+        List<SeatDetailResponse> seatDetailResponses = new ArrayList<>();
+        List<SeatDetail> seatDetails = seatDetailRepository.findSeatDetailByStatus(true);
+        seatDetails.stream().forEach(seatDetail -> {
+            SeatDetailResponse seatDetailResponse = SeatDetailResponse.builder()
+                    .studioName(seatDetail.getStudioId())
+                    .seatCode(seatDetail.getSeatId().getSeatCode())
+                    .status(seatDetail.getStatus())
+                    .build();
+            seatDetailResponses.add(seatDetailResponse);
+        } );
+        log.info("success get seat detail, if status = true");
+        return seatDetailResponses;
     }
 }

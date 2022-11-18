@@ -9,6 +9,6 @@ public interface SeatDetailService {
 
     SeatDetailResponse addSeatAndStudio(SeatDetailRequest seatDetailRequest);
 
-    List<SeatDetailResponse> getSeatIfAvailable(Boolean status);
+    List<SeatDetailResponse> getSeatIfAvailable();
 
 }

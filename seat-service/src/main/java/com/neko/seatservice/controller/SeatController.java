@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/seat")
@@ -77,4 +79,29 @@ public class SeatController {
             return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/get-available")
+    @ResponseBody
+    public ResponseEntity<WebResponse<List<SeatDetailResponse>>> getSeatIfAvailable() {
+        log.info("call controller getSeatIfAvailable - seat detail service");
+        try {
+            List<SeatDetailResponse> seatIfAvailableResponse = seatDetailService.getSeatIfAvailable();
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(),
+                    seatIfAvailableResponse
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+        }catch (Exception exception) {
+            log.error("error {} ", exception.getMessage());
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    null
+            );
+
+            return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
