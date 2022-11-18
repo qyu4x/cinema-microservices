@@ -5,7 +5,6 @@ import com.neko.moviescheduleservice.model.entity.MovieSchedule;
 import com.neko.moviescheduleservice.model.entity.Schedule;
 import com.neko.moviescheduleservice.model.request.MovieScheduleRequest;
 import com.neko.moviescheduleservice.model.response.MovieScheduleResponse;
-import com.neko.moviescheduleservice.model.response.ScheduleResponse;
 import com.neko.moviescheduleservice.repository.MovieScheduleRepository;
 import com.neko.moviescheduleservice.repository.ScheduleRepository;
 import com.neko.moviescheduleservice.service.MovieScheduleService;

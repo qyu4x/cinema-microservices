@@ -170,6 +170,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieScheduleResponse> movieScheduleResponses = new ArrayList<>();
         scheduleResponses.getData().stream().forEach(scheduleResponse -> {
             MovieScheduleResponse movieScheduleResponse = MovieScheduleResponse.builder()
+                    .id(scheduleResponse.getMovieId())
                     .movieId(scheduleResponse.getMovieId())
                     .schedule(scheduleResponse.getSchedule())
                     .build();
@@ -179,6 +180,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieStudioResponse> movieStudioResponses = new ArrayList<>();
         studioResponses.getData().stream().forEach(studioResponse -> {
             MovieStudioResponse movieStudioResponse = MovieStudioResponse.builder()
+                    .id(studioResponse.getId())
                     .movieId(studioResponse.getMovieId())
                     .studio(studioResponse.getStudio())
                     .build();
@@ -203,6 +205,5 @@ public class MovieServiceImpl implements MovieService {
                 .movieStudioResponses(movieStudioResponses)
                 .build();
     }
-
 
 }

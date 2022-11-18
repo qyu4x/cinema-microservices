@@ -83,9 +83,10 @@ public class ScheduleController {
     @GetMapping("/get/{id}")
     @ResponseBody
     public ResponseEntity<WebResponse<List<MovieScheduleResponse>>> findMovieScheduleByMovieId(@PathVariable("id") String id) {
-        log.info("call controller find movei schedule by movie id");
+        log.info("call controller find movie schedule by movie id");
         try {
             List<MovieScheduleResponse> movieScheduleResponses = movieScheduleService.findMovieScheduleByMovieId(id);
+            log.info("successfuly get schedule with id {} ", id );
             WebResponse<List<MovieScheduleResponse>> webResponse = new WebResponse<>(
                     HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(),
