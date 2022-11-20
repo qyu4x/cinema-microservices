@@ -9,5 +9,6 @@ public interface ScheduleService {
 
     List<ScheduleResponse> add(List<ScheduleRequest> scheduleRequest);
 
+    ScheduleResponse findScheduleById(String scheduleId);
 
 }

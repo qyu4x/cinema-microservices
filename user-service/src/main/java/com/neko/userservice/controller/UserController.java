@@ -9,6 +9,7 @@ import com.neko.userservice.model.request.UserRequest;
 import com.neko.userservice.model.request.UserUpdateRequest;
 import com.neko.userservice.model.response.GlobalResponseHandler;
 import com.neko.userservice.model.response.UserResponse;
+import com.neko.userservice.model.response.WebResponse;
 import com.neko.userservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,16 +83,29 @@ public class UserController {
 
     @GetMapping(value = "/get/{id}")
     @ResponseBody
-    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
+    public ResponseEntity<WebResponse<UserResponse>> getUserById(@PathVariable("id") String id) {
         log.info("#calling controller get user by id");
         try {
             UserResponse userResponse = userService.findById(id);
             log.info("#successfully get data user with id {}", id);
-            return GlobalResponseHandler
-                    .generateResponse("successfully get data user with id "  + id ,HttpStatus.OK, userResponse);
+            return new ResponseEntity<>(
+                   new WebResponse<>(
+                           HttpStatus.OK.value(),
+                           HttpStatus.OK.getReasonPhrase(),
+                           userResponse
+                   ),
+                    HttpStatus.OK
+            );
         }catch (DataNotFoundException exception) {
             log.info("#failed delete user with id {}", id);
-            return GlobalExceptionHandler.dataNotFoundHandler(exception.getMessage());
+            return new ResponseEntity<>(
+                    new WebResponse<>(
+                            HttpStatus.NOT_FOUND.value(),
+                            HttpStatus.NOT_FOUND.getReasonPhrase(),
+                            null
+                    ),
+                    HttpStatus.NOT_FOUND
+            );
         }
     }
 }

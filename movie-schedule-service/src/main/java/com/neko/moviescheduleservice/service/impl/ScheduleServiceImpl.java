@@ -1,5 +1,6 @@
 package com.neko.moviescheduleservice.service.impl;
 
+import com.neko.moviescheduleservice.exception.DataNotFoundException;
 import com.neko.moviescheduleservice.model.entity.Schedule;
 import com.neko.moviescheduleservice.model.request.ScheduleRequest;
 import com.neko.moviescheduleservice.model.response.ScheduleResponse;
@@ -54,6 +55,22 @@ public class ScheduleServiceImpl implements ScheduleService {
                 }
         );
         return scheduleResponses;
+    }
+
+    @Override
+    public ScheduleResponse findScheduleById(String scheduleId) {
+        if (scheduleId == null) {
+            throw new DataNotFoundException("schedule id is null");
+        }
+
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> {
+            throw new DataNotFoundException(String.format("data schedule with id %s is null", scheduleId));
+        });
+
+        return ScheduleResponse.builder()
+                .id(schedule.getId())
+                .price(schedule.getPrice())
+                .build();
     }
 
 }

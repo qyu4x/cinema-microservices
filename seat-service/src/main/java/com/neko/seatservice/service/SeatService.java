@@ -7,4 +7,6 @@ public interface SeatService {
 
     SeatResponse add(SeatRequest seatRequest);
 
+    Boolean findIfExist(String id);
+
 }

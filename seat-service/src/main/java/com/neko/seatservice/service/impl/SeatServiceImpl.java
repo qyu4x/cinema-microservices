@@ -28,4 +28,10 @@ public class SeatServiceImpl implements SeatService {
                 .seatCode(seat.getSeatCode())
                 .build();
     }
+
+    @Override
+    public Boolean findIfExist(String id) {
+        return seatRepository.existsById(id);
+    }
+
 }

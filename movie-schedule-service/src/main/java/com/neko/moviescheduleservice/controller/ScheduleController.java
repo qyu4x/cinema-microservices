@@ -1,5 +1,6 @@
 package com.neko.moviescheduleservice.controller;
 
+import com.neko.moviescheduleservice.exception.DataNotFoundException;
 import com.neko.moviescheduleservice.model.request.MovieScheduleRequest;
 import com.neko.moviescheduleservice.model.request.ScheduleRequest;
 import com.neko.moviescheduleservice.model.response.MovieScheduleResponse;
@@ -100,6 +101,31 @@ public class ScheduleController {
                     HttpStatus.NOT_FOUND.getReasonPhrase(),
                     null
             );
+            return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/get-schedule/{id}")
+    @ResponseBody
+    public ResponseEntity<WebResponse<ScheduleResponse>> findScheduleById(@PathVariable("id") String scheduleId) {
+        log.info("call controller find schedule by id -- schedule service");
+        try {
+            ScheduleResponse scheduleResponse = scheduleService.findScheduleById(scheduleId);
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(),
+                    scheduleResponse
+            );
+
+            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+        }catch (DataNotFoundException exception) {
+            log.error("error {} ", exception.getMessage());
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    null
+            );
+
             return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
         }
     }

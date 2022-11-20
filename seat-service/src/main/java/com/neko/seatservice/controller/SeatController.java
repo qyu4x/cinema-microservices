@@ -104,4 +104,29 @@ public class SeatController {
         }
     }
 
+    @GetMapping("/exists/{id}")
+    @ResponseBody
+    public ResponseEntity<WebResponse<Boolean>> checkIfExists(@PathVariable("id") String id) {
+        log.info("call controller check if exists - seat detail service");
+        try {
+            Boolean seatIfAvailableResponse = seatService.findIfExist(id);
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(),
+                    seatIfAvailableResponse
+            );
+            return new ResponseEntity<>(webResponse, HttpStatus.OK);
+        }catch (Exception exception) {
+            log.error("error {} ", exception.getMessage());
+            WebResponse webResponse = new WebResponse(
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    false
+            );
+
+            return new ResponseEntity<>(webResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }
